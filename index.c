@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MaxEmployees 5
+#define MAX_EMPLOYEE 5
+#define EMPLOYEE_FILE "data/employee.txt"
+#define SALES_TARGET_FILE "data/sales_target.txt"
+#define SALES_HISTORY_FILE "data/sales_history.txt"
+#define BEST_EMPLOYEE_FILE "data/sales_history.txt"
 
 typedef struct
 {
@@ -10,15 +14,21 @@ typedef struct
     char employee_id[10];
     char gender[10];
     int salary;
-}
+} Employee;
 
-employee;
-
-employee employees[MaxEmployees];
+Employee employee;
 
 int main()
 {
-    generateEmploy();
+    // generateEmployee();
+
+    menu();
+
+    return 0;
+}
+
+void menu()
+{
 
     char choice;
     while (1)
@@ -31,7 +41,7 @@ int main()
         switch (choice)
         {
         case '1':
-            displayEmploy();
+            displayEmployee();
             break;
         case '2':
 
@@ -49,32 +59,72 @@ int main()
             printf("\n\n\t\t---------- Wrong Choice -----------\n\n");
         }
     }
-
-    return 0;
 }
 
-void generateEmploy()
+void generateEmployee()
 {
-    employees[0] = (employee){"Meherab", 25, "EM001", "Male", 25000};
-    employees[1] = (employee){"Sultana", 22, "EM002", "Female", 26000};
-    employees[2] = (employee){"Alif", 24, "EM003", "Male", 24500};
-    employees[3] = (employee){"Adity", 21, "EM004", "Female", 22000};
-    employees[4] = (employee){"Dhiman", 23, "EM005", "Male", 25000};
-}
-
-void displayEmploy()
-{
-    tableStart("EMPLOYEE LIST START");
-    printf("\nNAME\t\t\tID\t\tAGE\t\tGENDER\t\tSARALY\n");
-    border();
-    for (int i = 0; i < MaxEmployees; i++)
+    FILE *file;
+    file = fopen(EMPLOYEE_FILE, "a");
+    if (file == NULL)
     {
-        printf("\n%s\t\t\t%s\t\t%d\t\t%s\t\t%d\n",
-               employees[i].name, employees[i].employee_id, employees[i].age, employees[i].gender, employees[i].salary);
-        border();
+        printf("Something went wrong!\n");
+        return;
     }
-    tableStart("EMPLOYEE LIST END");
-    printf("\n\n");
+    printf("Enter Employee Name: ");
+    scanf("%s", employee.name);
+    printf("\nEnter Employee ID: ");
+    scanf("%s", employee.employee_id);
+    printf("\nEnter Employee Age: ");
+    scanf("%d", &employee.age);
+    printf("\nEnter Employee Gender: ");
+    scanf("%s", employee.gender);
+    printf("\nEnter Employee Salary: ");
+    scanf("%d", &employee.salary);
+    fprintf(file, "%s\t\t\t%d\t\t%s\t\t%s\t\t%d\n", employee.name, employee.age, employee.employee_id, employee.gender, employee.salary);
+    fclose(file);
+    displayEmployee();
+}
+
+void displayEmployee()
+{
+    FILE *file;
+    file = fopen(EMPLOYEE_FILE, "r");
+
+    if (file == NULL)
+    {
+        printf("Error in reading or does not exist the file '%s'", EMPLOYEE_FILE);
+        return;
+    }
+    else
+    {
+        tableStart("EMPLOYEE LIST START");
+        printf("\nNAME\t\t\tID\t\tAGE\t\tGENDER\t\tSARALY\n");
+        border();
+        while (fscanf(file, "%s\t\t\t%d\t\t%s\t\t%s\t\t%d\n", employee.name, &employee.age, employee.employee_id, employee.gender, &employee.salary) != EOF)
+        {
+            printf("\n%s\t\t\t%s\t\t%d\t\t%s\t\t%d\n",
+                   employee.name, employee.employee_id, employee.age, employee.gender, employee.salary);
+            border();
+        }
+        tableStart("EMPLOYEE LIST END");
+    }
+    printf("\n\n1. Add Employee\n2. Back To Main Menu\nYour Choice: ");
+    char choice;
+    choice = getche();
+
+    system("cls");
+
+    switch (choice)
+    {
+    case '1':
+        generateEmployee();
+        break;
+    case '2':
+        menu();
+        break;
+    default:
+        printf("\n\n\t\t---------- Wrong Choice -----------\n\n");
+    }
 }
 void border()
 {
